@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>Método — Saxofone</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#141A17">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<style>
+  :root{
+    --bg:#141A17; --surface:#1C2420; --surface-2:#232C27;
+    --brass:#C9A227; --patina:#4E7C6E; --patina-soft:#6B9587;
+    --ink:#EDE6D6; --ink-muted:#9AA5A0; --line:#2E3833;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; padding-bottom:88px;}
+  h1,h2,h3{font-family:'Fraunces',serif; font-weight:600; margin:0;}
+  .staff{position:relative; height:12px; margin:16px 0;}
+  .staff::before{content:""; position:absolute; left:0; right:0; top:0; bottom:0;
+    background-image: repeating-linear-gradient(var(--line), var(--line) 1px, transparent 1px, transparent 4px); opacity:0.5;}
+
+  header.hero{padding:0 0 14px; border-bottom:1px solid var(--line);}
+  .cover{width:100%; height:190px; object-fit:cover; object-position:center 15%; display:block;}
+  .hero-text{padding:16px 18px 0;}
+  .eyebrow{font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--brass);}
+  .hero h1{font-size:24px; margin-top:6px;}
+  .datetime{font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--ink-muted); margin-top:8px; letter-spacing:0.02em;}
+  .week-badge{display:inline-flex; gap:8px; margin-top:12px; background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:6px 14px; font-size:12px; color:var(--patina-soft);}
+  .week-badge b{color:var(--brass); font-family:'Fraunces',serif;}
+
+  nav.tabs{position:fixed; bottom:0; left:0; right:0; display:flex; background:var(--surface); border-top:1px solid var(--line); z-index:20;}
+  nav.tabs button{flex:1; background:none; border:none; color:var(--ink-muted); font-size:10.5px; padding:10px 2px 8px; display:flex; flex-direction:column; align-items:center; gap:3px;}
+  nav.tabs button.active{color:var(--brass);}
+  nav.tabs .dot{width:4px; height:4px; border-radius:50%; background:currentColor; opacity:0;}
+  nav.tabs button.active .dot{opacity:1;}
+
+  main{padding:16px 16px 26px;}
+  section.tab{display:none;}
+  section.tab.active{display:block;}
+
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:14px;}
+  .card h3{font-size:15.5px;}
+  .card .meta{font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--patina-soft); margin-top:2px;}
+  .card p.desc{color:var(--ink-muted); font-size:12.5px; line-height:1.5; margin:10px 0 0;}
+
+  .block-row{display:flex; align-items:flex-start; gap:12px;}
+  .check{width:22px; height:22px; border-radius:6px; border:1.5px solid var(--patina-soft); flex:none; margin-top:2px; display:flex; align-items:center; justify-content:center; font-size:13px; color:var(--bg);}
+  .check.done{background:var(--brass); border-color:var(--brass);}
+  .block-body{flex:1;}
+
+  .bpm-row{display:flex; align-items:center; gap:8px; margin-top:12px; flex-wrap:wrap;}
+  .bpm-field{display:flex; flex-direction:column; gap:3px;}
+  .bpm-field label{font-size:10px; color:var(--ink-muted); text-transform:uppercase; letter-spacing:0.05em;}
+  .bpm-field input{width:64px; background:var(--bg); border:1px solid var(--line); color:var(--brass); border-radius:8px; padding:7px; font-family:'JetBrains Mono',monospace; text-align:center; font-size:13px;}
+  .arrow{color:var(--ink-muted); margin-top:14px;}
+
+  .timer-row{display:flex; align-items:center; gap:10px; margin-top:12px;}
+  .timer-display{font-family:'JetBrains Mono',monospace; font-size:20px; color:var(--brass); min-width:58px;}
+
+  .btn{border:1px solid var(--line); background:var(--surface-2); color:var(--ink); border-radius:9px; padding:8px 14px; font-size:12.5px;}
+  .btn.primary{background:var(--brass); color:#1a1a12; border-color:var(--brass); font-weight:600;}
+  .btn.ghost{background:none;}
+  .btn.small{padding:6px 10px; font-size:11.5px;}
+  .btn.block{width:100%;}
+
+  .tip{border-left:3px solid var(--patina); background:var(--surface-2); border-radius:0 10px 10px 0; padding:12px 14px; font-size:12px; color:var(--ink-muted); margin-bottom:14px; line-height:1.5;}
+  .tip b{color:var(--patina-soft);}
+
+  .finish-bar{margin-top:6px;}
+  .finish-bar button{width:100%; padding:14px; border-radius:12px; font-size:14px;}
+
+  .progress-outer{background:var(--surface-2); border-radius:8px; height:8px; overflow:hidden; margin-top:10px;}
+  .progress-inner{background:var(--brass); height:100%; border-radius:8px;}
+  .deadline{font-size:11.5px; color:var(--ink-muted); margin-top:8px;}
+  .pace{font-size:12px; color:var(--patina-soft); margin-top:6px; font-family:'JetBrains Mono',monospace;}
+  .priority-flag{display:inline-block; font-size:10px; font-family:'JetBrains Mono',monospace; padding:2px 8px; border-radius:999px; background:var(--brass); color:#1a1a12; margin-left:6px; vertical-align:middle;}
+
+  .measure-row{display:flex; align-items:center; gap:8px; margin-top:12px;}
+  .measure-row input{width:70px; background:var(--bg); border:1px solid var(--line); color:var(--ink); border-radius:8px; padding:7px; font-family:'JetBrains Mono',monospace; text-align:center;}
+
+  .hist-item{border-bottom:1px solid var(--line); padding:12px 0;}
+  .hist-item:last-child{border-bottom:none;}
+  .hist-date{font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--brass);}
+  .hist-blocks{font-size:12px; color:var(--ink-muted); margin-top:4px; line-height:1.6;}
+  .empty{color:var(--ink-muted); font-size:13px; text-align:center; padding:26px 10px;}
+
+  .fab{position:fixed; right:16px; bottom:74px; width:52px; height:52px; border-radius:50%; background:var(--brass); color:#1a1a12; border:none; font-size:20px; display:flex; align-items:center; justify-content:center; z-index:25; box-shadow:0 4px 14px rgba(0,0,0,0.4);}
+  .modal-overlay{display:none; position:fixed; inset:0; background:rgba(10,12,10,0.72); z-index:40; align-items:flex-end;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:var(--surface); border-radius:18px 18px 0 0; padding:20px; width:100%; border-top:1px solid var(--line);}
+  .modal-close{float:right; color:var(--ink-muted); background:none; border:none; font-size:14px;}
+  .metro-wrap{text-align:center;}
+  .bpm-big{font-family:'JetBrains Mono',monospace; font-size:48px; color:var(--brass); line-height:1;}
+  .bpm-label{font-size:10.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-muted); margin-top:2px;}
+  .pulse{width:14px; height:14px; border-radius:50%; background:var(--patina); margin:14px auto; transition:transform 0.08s, background 0.08s;}
+  .pulse.beat{transform:scale(1.6); background:var(--brass);}
+  input[type=range]{width:100%; accent-color:var(--brass);}
+  .metro-controls{display:flex; gap:10px; justify-content:center; margin-top:12px;}
+
+  .modal-tabs{display:flex; gap:8px; margin-bottom:14px;}
+  .mtab{flex:1; background:var(--surface-2); border:1px solid var(--line); color:var(--ink-muted); border-radius:9px; padding:8px 6px; font-size:12px;}
+  .mtab.active{background:var(--brass); color:#1a1a12; border-color:var(--brass); font-weight:600;}
+  .drone-selects{display:flex; gap:8px; justify-content:center; margin-top:12px;}
+  .drone-selects select{background:var(--bg); border:1px solid var(--line); color:var(--ink); border-radius:8px; padding:8px; font-family:'Inter'; font-size:13px;}
+
+  .log-entry{border-bottom:1px solid var(--line); padding:10px 0; font-size:12.5px;}
+  .log-entry:last-child{border-bottom:none;}
+  .log-entry .lw{color:var(--brass); font-family:'JetBrains Mono',monospace; font-size:11px;}
+  .log-entry .lk{color:var(--ink); margin-top:2px;}
+  .log-entry .lb{color:var(--ink-muted); margin-top:2px; font-family:'JetBrains Mono',monospace; font-size:11px;}
+
+  .toast{position:fixed; left:50%; bottom:96px; transform:translateX(-50%) translateY(10px); background:var(--brass); color:#1a1a12; font-weight:600; font-size:12.5px; padding:10px 18px; border-radius:999px; opacity:0; transition:opacity 0.2s, transform 0.2s; z-index:50; pointer-events:none; white-space:nowrap;}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <img src="capa-saxofone.png" alt="Capa — Saxofone" class="cover">
+  <div class="hero-text">
+    <div class="eyebrow">Méthode · Conservatoire de Paris</div>
+    <div class="datetime" id="datetimeDisplay">—</div>
+    <h1>Saxofone</h1>
+    <div class="week-badge" id="weekBadge">—</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ROTINA -->
+  <section class="tab active" id="tab-rotina">
+    <div class="staff"></div>
+    <div class="tip"><b>Sempre por primeiro:</b> aqueça no soprano antes de qualquer outro instrumento.</div>
+
+    <div class="card" data-block="1">
+      <div class="block-row">
+        <div class="check" onclick="toggleBlock(1)"></div>
+        <div class="block-body">
+          <h3>1 · Aquecimento + Afinação</h3>
+          <div class="meta">15 min · diário</div>
+          <p class="desc">Long tones com afinador nas notas problemáticas (Ré/Ré# médio, agudo). Reafine a cada 15–20 min de prática.</p>
+          <div class="timer-row">
+            <div class="timer-display" id="t1">15:00</div>
+            <button class="btn small" onclick="startTimer(1,900)">Iniciar</button>
+            <button class="btn small ghost" onclick="pauseTimer(1)">Pausar</button>
+            <button class="btn small ghost" onclick="resetTimer(1,900)">Zerar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-block="2">
+      <div class="block-row">
+        <div class="check" onclick="toggleBlock(2)"></div>
+        <div class="block-body">
+          <h3>2 · Escalas — Londeix</h3>
+          <div class="meta" id="scaleWeekMeta">—</div>
+          <p class="desc" id="scaleWeekDesc">—</p>
+          <div class="bpm-row">
+            <div class="bpm-field"><label>BPM inicial</label><input type="number" id="scaleBpmStart" placeholder="60"></div>
+            <span class="arrow">→</span>
+            <div class="bpm-field"><label>BPM final</label><input type="number" id="scaleBpmEnd" placeholder="96"></div>
+          </div>
+          <div class="timer-row">
+            <div class="timer-display" id="t2">18:00</div>
+            <button class="btn small" onclick="startTimer(2,1080)">Iniciar</button>
+            <button class="btn small ghost" onclick="pauseTimer(2)">Pausar</button>
+            <button class="btn small ghost" onclick="resetTimer(2,1080)">Zerar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-block="3">
+      <div class="block-row">
+        <div class="check" onclick="toggleBlock(3)"></div>
+        <div class="block-body">
+          <h3>3 · Estudos — Ferling</h3>
+          <div class="meta" id="ferlingWeekMeta">—</div>
+          <p class="desc">Um estudo de trabalho lento (fraseado/respiração) e um de fluência (articulação/velocidade), alternando toda semana.</p>
+          <div class="bpm-row">
+            <div class="bpm-field"><label>Lento — início</label><input type="number" id="ferlingSlowStart" placeholder="60"></div>
+            <span class="arrow">→</span>
+            <div class="bpm-field"><label>Lento — fim</label><input type="number" id="ferlingSlowEnd" placeholder="72"></div>
+          </div>
+          <div class="bpm-row">
+            <div class="bpm-field"><label>Rápido — início</label><input type="number" id="ferlingFastStart" placeholder="88"></div>
+            <span class="arrow">→</span>
+            <div class="bpm-field"><label>Rápido — fim</label><input type="number" id="ferlingFastEnd" placeholder="112"></div>
+          </div>
+          <div class="timer-row">
+            <div class="timer-display" id="t3">18:00</div>
+            <button class="btn small" onclick="startTimer(3,1080)">Iniciar</button>
+            <button class="btn small ghost" onclick="pauseTimer(3)">Pausar</button>
+            <button class="btn small ghost" onclick="resetTimer(3,1080)">Zerar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-block="4">
+      <div class="block-row">
+        <div class="check" onclick="toggleBlock(4)"></div>
+        <div class="block-body">
+          <h3>4 · Repertório <span id="repHoje">—</span></h3>
+          <div class="meta">Duo Concertant + Rhapsody, todo dia</div>
+
+          <p class="desc" style="margin-top:14px;"><b style="color:var(--ink);">Duo Concertant</b></p>
+          <div class="bpm-row">
+            <div class="bpm-field"><label>BPM inicial</label><input type="number" id="duoBpmStart" placeholder="70"></div>
+            <span class="arrow">→</span>
+            <div class="bpm-field"><label>BPM final</label><input type="number" id="duoBpmEnd" placeholder="96"></div>
+          </div>
+          <div class="timer-row">
+            <div class="timer-display" id="t4duo">12:00</div>
+            <button class="btn small" onclick="startTimer('4duo',720)">Iniciar</button>
+            <button class="btn small ghost" onclick="pauseTimer('4duo')">Pausar</button>
+            <button class="btn small ghost" onclick="resetTimer('4duo',720)">Zerar</button>
+          </div>
+          <div class="measure-row">
+            <input type="number" id="duoCompassosHoje" placeholder="0" min="0">
+            <span style="font-size:12px; color:var(--ink-muted);">compassos lidos hoje</span>
+            <button class="btn small" onclick="registrarCompassos('duo')">Registrar</button>
+          </div>
+
+          <p class="desc" style="margin-top:16px;"><b style="color:var(--ink);">Rhapsody</b> <span style="color:var(--ink-muted); font-weight:400;">— A. Waignein (sax alto)</span></p>
+          <div class="bpm-row">
+            <div class="bpm-field"><label>BPM inicial</label><input type="number" id="rhapBpmStart" placeholder="66"></div>
+            <span class="arrow">→</span>
+            <div class="bpm-field"><label>BPM final</label><input type="number" id="rhapBpmEnd" placeholder="88"></div>
+          </div>
+          <div class="timer-row">
+            <div class="timer-display" id="t4rhap">13:00</div>
+            <button class="btn small" onclick="startTimer('4rhap',780)">Iniciar</button>
+            <button class="btn small ghost" onclick="pauseTimer('4rhap')">Pausar</button>
+            <button class="btn small ghost" onclick="resetTimer('4rhap',780)">Zerar</button>
+          </div>
+          <div class="measure-row">
+            <input type="number" id="rhapCompassosHoje" placeholder="0" min="0">
+            <span style="font-size:12px; color:var(--ink-muted);">compassos lidos hoje</span>
+            <button class="btn small" onclick="registrarCompassos('rhap')">Registrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="finish-bar">
+      <button class="btn primary" onclick="finishSession()">Concluir sessão de hoje</button>
+    </div>
+  </section>
+
+  <!-- ESCALAS -->
+  <section class="tab" id="tab-escalas">
+    <div class="staff"></div>
+    <div class="tip">Ordem progressiva das 15 tonalidades usada no próprio método de Londeix — alterna sustenidos e bemóis à medida que os acidentes aumentam. Não é uma técnica adicional de bordão; é a sequência real do livro.</div>
+    <div class="card">
+      <h3>Início do ciclo</h3>
+      <p class="desc">Data em que a semana 1 (Dó Maior / Estudo nº1) começou a valer.</p>
+      <div class="measure-row">
+        <input type="date" id="cycleStartInput" style="width:auto;">
+        <button class="btn small" onclick="saveCycleStart()">Salvar</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Registro semanal</h3>
+      <div id="scaleLogList"><div class="empty">Nenhum registro ainda.</div></div>
+    </div>
+  </section>
+
+  <!-- ESTUDOS -->
+  <section class="tab" id="tab-estudos">
+    <div class="staff"></div>
+    <div class="tip">Numeração alterna estudo lento / estudo rápido a cada semana, percorrendo os 48 Études em ciclos de 24 semanas. Ajuste os números se a ordem não bater com o grau de dificuldade real na sua edição.</div>
+    <div class="card">
+      <h3>Registro semanal</h3>
+      <div id="ferlingLogList"><div class="empty">Nenhum registro ainda.</div></div>
+    </div>
+  </section>
+
+  <!-- REPERTORIO -->
+  <section class="tab" id="tab-rep">
+    <div class="staff"></div>
+
+    <div class="card">
+      <h3>Duo Concertant <span class="priority-flag" id="flagDuo" style="display:none;">prioridade</span></h3>
+      <div class="meta">Leitura até 31/08/2026</div>
+      <div class="deadline" id="deadlineDuo"></div>
+      <div class="progress-outer"><div class="progress-inner" id="progDuo" style="width:0%;"></div></div>
+      <div class="measure-row">
+        <input type="number" id="duoAtual" min="0" onchange="saveRep()"> / <input type="number" id="duoTotal" min="1" onchange="saveRep()"> compassos
+      </div>
+      <div class="pace" id="paceDuo"></div>
+    </div>
+
+    <div class="card">
+      <h3>Rhapsody <span class="priority-flag" id="flagRhap" style="display:none;">prioridade</span></h3>
+      <div class="meta">Leitura até 31/12/2026</div>
+      <div class="deadline" id="deadlineRhap"></div>
+      <div class="progress-outer"><div class="progress-inner" id="progRhap" style="width:0%;"></div></div>
+      <div class="measure-row">
+        <input type="number" id="rhapAtual" min="0" onchange="saveRep()"> / <input type="number" id="rhapTotal" min="1" onchange="saveRep()"> compassos
+      </div>
+      <div class="pace" id="paceRhap"></div>
+    </div>
+  </section>
+
+  <!-- HISTORICO -->
+  <section class="tab" id="tab-hist">
+    <div class="staff"></div>
+    <div class="card">
+      <h3>Sessões registradas</h3>
+      <div id="histList"><div class="empty">Nenhuma sessão concluída ainda.</div></div>
+    </div>
+    <button class="btn ghost block" onclick="clearHistory()">Limpar histórico</button>
+  </section>
+
+</main>
+
+<button class="fab" onclick="openMetro()">♩</button>
+<div class="modal-overlay" id="metroModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeMetro()">Fechar ✕</button>
+    <div class="modal-tabs">
+      <button class="mtab active" id="mtabMetro" onclick="showMTab('metro')">Metrônomo</button>
+      <button class="mtab" id="mtabDrone" onclick="showMTab('drone')">Drone (oboé)</button>
+    </div>
+
+    <div class="metro-wrap" id="panelMetro">
+      <div class="bpm-big" id="bpmDisplay">88</div>
+      <div class="bpm-label">BPM</div>
+      <div class="pulse" id="pulseDot"></div>
+      <input type="range" min="40" max="208" value="88" id="bpmSlider" oninput="setBpm(this.value)">
+      <div class="metro-controls">
+        <button class="btn" onclick="adjustBpm(-1)">−1</button>
+        <button class="btn primary" id="metroToggle" onclick="toggleMetro()">Iniciar</button>
+        <button class="btn" onclick="adjustBpm(1)">+1</button>
+      </div>
+      <div class="metro-controls"><button class="btn small ghost" onclick="tapTempo()">Tap tempo</button></div>
+    </div>
+
+    <div class="metro-wrap" id="panelDrone" style="display:none;">
+      <div class="bpm-big" id="droneNoteDisplay">Lá3</div>
+      <div class="bpm-label" id="droneFreqDisplay">220.0 Hz</div>
+      <div class="drone-selects">
+        <select id="droneNote" onchange="updateDroneFreq()">
+          <option value="0">Dó</option><option value="1">Dó#</option><option value="2">Ré</option>
+          <option value="3">Ré#</option><option value="4">Mi</option><option value="5">Fá</option>
+          <option value="6">Fá#</option><option value="7">Sol</option><option value="8">Sol#</option>
+          <option value="9" selected>Lá</option><option value="10">Lá#</option><option value="11">Si</option>
+        </select>
+        <select id="droneOctave" onchange="updateDroneFreq()">
+          <option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5</option>
+        </select>
+      </div>
+      <div class="metro-controls">
+        <button class="btn primary" id="droneToggle" onclick="toggleDrone()">Tocar</button>
+      </div>
+      <div class="bpm-field" style="margin:14px auto 0; max-width:220px;">
+        <label>Volume</label>
+        <input type="range" min="0" max="100" value="55" id="droneVolume" oninput="setDroneVolume(this.value)">
+      </div>
+      <p class="desc" style="margin-top:14px; text-align:left;">Timbre sintetizado por harmônicos (aproximação do oboé, não amostra real) — bom o bastante pra afinação por referência, mas não substitui um oboé de verdade num naipe.</p>
+    </div>
+  </div>
+</div>
+
+<nav class="tabs">
+  <button class="tab-btn active" data-tab="rotina" onclick="showTab('rotina')"><span>Rotina</span><span class="dot"></span></button>
+  <button class="tab-btn" data-tab="escalas" onclick="showTab('escalas')"><span>Escalas</span><span class="dot"></span></button>
+  <button class="tab-btn" data-tab="estudos" onclick="showTab('estudos')"><span>Estudos</span><span class="dot"></span></button>
+  <button class="tab-btn" data-tab="rep" onclick="showTab('rep')"><span>Repertório</span><span class="dot"></span></button>
+  <button class="tab-btn" data-tab="hist" onclick="showTab('hist')"><span>Histórico</span><span class="dot"></span></button>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------- Utilidades ---------- */
+function daysUntil(dateStr){ const target=new Date(dateStr+'T23:59:59'); return Math.ceil((target-new Date())/86400000); }
+function isoWeekNumber(d){
+  const date=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));
+  const dayNum=(date.getUTCDay()+6)%7;
+  date.setUTCDate(date.getUTCDate()-dayNum+3);
+  const firstThursday=new Date(Date.UTC(date.getUTCFullYear(),0,4));
+  return 1+Math.round(((date-firstThursday)/86400000-3+((firstThursday.getUTCDay()+6)%7))/7);
+}
+function todayDateOnly(){ return new Date().toISOString().slice(0,10)+'T00:00:00'; }
+let cycleStart = localStorage.getItem('sax_cycle_start');
+if(!cycleStart){ cycleStart = new Date().toISOString().slice(0,10); localStorage.setItem('sax_cycle_start', cycleStart); }
+const daysSinceStart = Math.floor((new Date(todayDateOnly()) - new Date(cycleStart+'T00:00:00')) / 86400000);
+const weekNum = Math.floor(daysSinceStart / 7) + 1;
+
+/* ---------- Ordem progressiva de tonalidades (Londeix) ---------- */
+const SCALES = [
+  {maj:'Dó Maior', min:'Lá menor'}, {maj:'Fá Maior', min:'Ré menor'},
+  {maj:'Sol Maior', min:'Mi menor'}, {maj:'Sib Maior', min:'Sol menor'},
+  {maj:'Ré Maior', min:'Si menor'}, {maj:'Mib Maior', min:'Dó menor'},
+  {maj:'Lá Maior', min:'Fá# menor'}, {maj:'Láb Maior', min:'Fá menor'},
+  {maj:'Mi Maior', min:'Dó# menor'}, {maj:'Réb Maior', min:'Sib menor'},
+  {maj:'Si Maior', min:'Sol# menor'}, {maj:'Solb Maior', min:'Mib menor'},
+  {maj:'Fá# Maior', min:'Ré# menor'}, {maj:'Dób Maior', min:'Láb menor'},
+  {maj:'Dó# Maior', min:'Lá# menor'}
+];
+const scaleIndex = (weekNum-1) % SCALES.length;
+const scaleThis = SCALES[scaleIndex];
+
+/* ---------- Ferling: 2 études por semana, ciclo de 24 semanas (1-48) ---------- */
+const ferlingCycle = (weekNum-1) % 24;
+const ferlingSlowNum = ferlingCycle*2+1;
+const ferlingFastNum = ferlingCycle*2+2;
+
+/* ---------- Estado do dia ---------- */
+const todayKey = new Date().toISOString().slice(0,10);
+let dayState = JSON.parse(localStorage.getItem('sax_day_'+todayKey) || '{"blocks":{}}');
+
+function toggleBlock(n){
+  dayState.blocks[n] = !dayState.blocks[n];
+  localStorage.setItem('sax_day_'+todayKey, JSON.stringify(dayState));
+  renderChecks();
+}
+function renderChecks(){
+  document.querySelectorAll('.card[data-block]').forEach(card=>{
+    const n=card.dataset.block, el=card.querySelector('.check');
+    if(dayState.blocks[n]){ el.classList.add('done'); el.textContent='✓'; }
+    else { el.classList.remove('done'); el.textContent=''; }
+  });
+}
+renderChecks();
+
+/* ---------- Timers de contagem regressiva ---------- */
+function pad(n){ return n.toString().padStart(2,'0'); }
+function fmt(sec){ sec=Math.max(0,sec); return pad(Math.floor(sec/60))+':'+pad(sec%60); }
+const timers = {};
+function startTimer(id, totalDefault){
+  if(!timers[id]) timers[id] = {remaining: totalDefault};
+  if(timers[id].interval) return;
+  timers[id].interval = setInterval(()=>{
+    timers[id].remaining--;
+    document.getElementById('t'+id).textContent = fmt(timers[id].remaining);
+    if(timers[id].remaining<=0){
+      clearInterval(timers[id].interval); timers[id].interval=null;
+      if(navigator.vibrate) navigator.vibrate([200,100,200]);
+    }
+  },1000);
+}
+function pauseTimer(id){
+  if(timers[id] && timers[id].interval){ clearInterval(timers[id].interval); timers[id].interval=null; }
+}
+function resetTimer(id, totalDefault){
+  pauseTimer(id);
+  timers[id] = {remaining: totalDefault};
+  document.getElementById('t'+id).textContent = fmt(totalDefault);
+}
+
+/* ---------- Render semana: escalas + ferling ---------- */
+function renderWeekInfo(){
+  document.getElementById('scaleWeekMeta').textContent = 'Semana '+weekNum+' do ciclo';
+  document.getElementById('scaleWeekDesc').textContent = scaleThis.maj+' / '+scaleThis.min+' — conjuntas, terças, quartas, quintas, sextas, sétimas, oitavas e triolets.';
+  document.getElementById('ferlingWeekMeta').textContent = 'Semana '+weekNum+' · Estudo nº'+ferlingSlowNum+' (lento) + nº'+ferlingFastNum+' (rápido)';
+}
+renderWeekInfo();
+
+/* ---------- Toast discreto ---------- */
+let toastTimer=null;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'), 1800);
+}
+
+/* ---------- Registrar compassos (repertório) ---------- */
+let rep = JSON.parse(localStorage.getItem('sax_rep')||'{"duoAtual":0,"duoTotal":165,"rhapAtual":0,"rhapTotal":402}');
+function registrarCompassos(piece){
+  const inputId = piece==='duo' ? 'duoCompassosHoje' : 'rhapCompassosHoje';
+  const val = parseInt(document.getElementById(inputId).value)||0;
+  if(val<=0) return;
+  if(piece==='duo') rep.duoAtual += val; else rep.rhapAtual += val;
+  localStorage.setItem('sax_rep', JSON.stringify(rep));
+  document.getElementById(inputId).value='';
+  loadRep();
+  showToast((piece==='duo'?'Duo Concertant':'Rhapsody')+': +'+val+' compassos ✓');
+}
+
+/* ---------- Concluir sessão -> Histórico ---------- */
+function finishSession(){
+  const labels = {1:'Aquecimento/Afinação',2:'Escalas',3:'Ferling',4:'Repertório'};
+  const done = Object.keys(dayState.blocks).filter(k=>dayState.blocks[k]).map(k=>labels[k]);
+  if(done.length===0){ showToast('Marque ao menos um bloco antes de concluir.'); return; }
+
+  const record = {
+    date: todayKey, blocks: done,
+    scale: dayState.blocks[2] ? {key: scaleThis.maj+'/'+scaleThis.min, bpmStart: val('scaleBpmStart'), bpmEnd: val('scaleBpmEnd')} : null,
+    ferling: dayState.blocks[3] ? {slowNum: ferlingSlowNum, fastNum: ferlingFastNum, slowBpm:[val('ferlingSlowStart'),val('ferlingSlowEnd')], fastBpm:[val('ferlingFastStart'),val('ferlingFastEnd')]} : null,
+    duo: dayState.blocks[4] ? {bpmStart: val('duoBpmStart'), bpmEnd: val('duoBpmEnd')} : null,
+    rhap: dayState.blocks[4] ? {bpmStart: val('rhapBpmStart'), bpmEnd: val('rhapBpmEnd')} : null
+  };
+  const sessions = JSON.parse(localStorage.getItem('sax_sessions')||'[]');
+  sessions.unshift(record);
+  localStorage.setItem('sax_sessions', JSON.stringify(sessions));
+
+  if(record.scale){
+    const scaleLog = JSON.parse(localStorage.getItem('sax_scaleLog')||'[]');
+    scaleLog.unshift({week:weekNum, date:todayKey, ...record.scale});
+    localStorage.setItem('sax_scaleLog', JSON.stringify(scaleLog));
+  }
+  if(record.ferling){
+    const ferlingLog = JSON.parse(localStorage.getItem('sax_ferlingLog')||'[]');
+    ferlingLog.unshift({week:weekNum, date:todayKey, ...record.ferling});
+    localStorage.setItem('sax_ferlingLog', JSON.stringify(ferlingLog));
+  }
+
+  renderHistory(); renderScaleLog(); renderFerlingLog();
+  showTab('hist');
+}
+function val(id){ const v=document.getElementById(id).value; return v===''? null : parseInt(v); }
+
+function renderHistory(){
+  const sessions = JSON.parse(localStorage.getItem('sax_sessions')||'[]');
+  const list = document.getElementById('histList');
+  if(sessions.length===0){ list.innerHTML='<div class="empty">Nenhuma sessão concluída ainda.</div>'; return; }
+  list.innerHTML = sessions.map(s=>{
+    const d=new Date(s.date+'T00:00:00');
+    const dstr=d.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'});
+    let extra='';
+    if(s.scale) extra += `Escala: ${s.scale.key} (${s.scale.bpmStart||'—'}→${s.scale.bpmEnd||'—'} bpm)<br>`;
+    if(s.ferling) extra += `Ferling nº${s.ferling.slowNum} lento (${s.ferling.slowBpm[0]||'—'}→${s.ferling.slowBpm[1]||'—'}), nº${s.ferling.fastNum} rápido (${s.ferling.fastBpm[0]||'—'}→${s.ferling.fastBpm[1]||'—'})<br>`;
+    if(s.duo) extra += `Duo Concertant: ${s.duo.bpmStart||'—'}→${s.duo.bpmEnd||'—'} bpm<br>`;
+    if(s.rhap) extra += `Rhapsody: ${s.rhap.bpmStart||'—'}→${s.rhap.bpmEnd||'—'} bpm<br>`;
+    return `<div class="hist-item"><div class="hist-date">${dstr}</div><div class="hist-blocks">${s.blocks.join(' · ')}<br>${extra}</div></div>`;
+  }).join('');
+}
+function clearHistory(){
+  if(confirm('Apagar todo o histórico de sessões?')){
+    localStorage.removeItem('sax_sessions');
+    renderHistory();
+  }
+}
+renderHistory();
+
+function renderScaleLog(){
+  const log = JSON.parse(localStorage.getItem('sax_scaleLog')||'[]');
+  const el = document.getElementById('scaleLogList');
+  if(log.length===0){ el.innerHTML='<div class="empty">Nenhum registro ainda.</div>'; return; }
+  el.innerHTML = log.map(e=>`<div class="log-entry"><div class="lw">Semana ${e.week} · ${e.date}</div><div class="lk">${e.key}</div><div class="lb">${e.bpmStart||'—'} → ${e.bpmEnd||'—'} bpm</div></div>`).join('');
+}
+renderScaleLog();
+
+document.getElementById('cycleStartInput').value = cycleStart;
+function saveCycleStart(){
+  const v = document.getElementById('cycleStartInput').value;
+  if(!v) return;
+  localStorage.setItem('sax_cycle_start', v);
+  showToast('Início do ciclo atualizado — recarregando...');
+  setTimeout(()=>location.reload(), 700);
+}
+
+function renderFerlingLog(){
+  const log = JSON.parse(localStorage.getItem('sax_ferlingLog')||'[]');
+  const el = document.getElementById('ferlingLogList');
+  if(log.length===0){ el.innerHTML='<div class="empty">Nenhum registro ainda.</div>'; return; }
+  el.innerHTML = log.map(e=>`<div class="log-entry"><div class="lw">Semana ${e.week} · ${e.date}</div><div class="lk">Estudo nº${e.slowNum} (lento) · nº${e.fastNum} (rápido)</div><div class="lb">Lento ${e.slowBpm[0]||'—'}→${e.slowBpm[1]||'—'} · Rápido ${e.fastBpm[0]||'—'}→${e.fastBpm[1]||'—'} bpm</div></div>`).join('');
+}
+renderFerlingLog();
+
+/* ---------- Navegação de abas ---------- */
+function showTab(name){
+  document.querySelectorAll('section.tab').forEach(s=>s.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===name));
+}
+
+/* ---------- Metrônomo (modal) ---------- */
+let bpm=88, metroInterval=null, audioCtx=null;
+function openMetro(){ document.getElementById('metroModal').classList.add('open'); }
+function closeMetro(){
+  document.getElementById('metroModal').classList.remove('open');
+  if(metroInterval){ toggleMetro(); }
+  if(droneOn){ toggleDrone(); }
+}
+function showMTab(name){
+  document.getElementById('panelMetro').style.display = name==='metro' ? '' : 'none';
+  document.getElementById('panelDrone').style.display = name==='drone' ? '' : 'none';
+  document.getElementById('mtabMetro').classList.toggle('active', name==='metro');
+  document.getElementById('mtabDrone').classList.toggle('active', name==='drone');
+  if(name!=='drone' && droneOn) toggleDrone();
+}
+
+/* ---------- Drone (timbre aproximado de oboé por harmônicos) ---------- */
+let droneOn=false, droneNodes=null, droneVolume=0.55;
+function noteFreq(semitoneFromC, octave){
+  // A4 = 440Hz. MIDI-like: C0 semitone index 0. semitoneFromC: 0=C,1=C#,...11=B
+  const midi = (octave+1)*12 + semitoneFromC; // C4 = MIDI 60
+  return 440 * Math.pow(2, (midi-69)/12);
+}
+const NOTE_NAMES = ['Dó','Dó#','Ré','Ré#','Mi','Fá','Fá#','Sol','Sol#','Lá','Lá#','Si'];
+function updateDroneFreq(){
+  const n = parseInt(document.getElementById('droneNote').value);
+  const oct = parseInt(document.getElementById('droneOctave').value);
+  const freq = noteFreq(n, oct);
+  document.getElementById('droneNoteDisplay').textContent = NOTE_NAMES[n]+oct;
+  document.getElementById('droneFreqDisplay').textContent = freq.toFixed(1)+' Hz';
+  if(droneOn){ stopDroneSound(); startDroneSound(freq); }
+}
+function setDroneVolume(v){
+  droneVolume = v/100;
+  if(droneNodes) droneNodes.master.gain.setValueAtTime(droneVolume, audioCtx.currentTime);
+}
+function startDroneSound(freq){
+  if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  const master = audioCtx.createGain();
+  master.gain.setValueAtTime(0, audioCtx.currentTime);
+  master.gain.linearRampToValueAtTime(droneVolume, audioCtx.currentTime+0.4);
+  // formante nasal do oboé: realce em torno de 1000-1500Hz
+  const filter = audioCtx.createBiquadFilter();
+  filter.type='peaking'; filter.frequency.value=1200; filter.Q.value=1.1; filter.gain.value=8;
+  filter.connect(master); master.connect(audioCtx.destination);
+
+  // harmônicos aditivos (aproximação do espectro de palheta dupla)
+  const harmonics = [
+    {mult:1, amp:1.0}, {mult:2, amp:0.55}, {mult:3, amp:0.75},
+    {mult:4, amp:0.35}, {mult:5, amp:0.5}, {mult:6, amp:0.22}, {mult:7, amp:0.15}
+  ];
+  const oscs = harmonics.map(h=>{
+    const osc = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    osc.type='sine'; osc.frequency.value=freq*h.mult;
+    g.gain.value=h.amp;
+    osc.connect(g); g.connect(filter);
+    osc.start();
+    return osc;
+  });
+  // leve vibrato natural
+  const lfo = audioCtx.createOscillator(); const lfoGain = audioCtx.createGain();
+  lfo.frequency.value=5; lfoGain.gain.value=freq*0.004;
+  lfo.connect(lfoGain);
+  oscs.forEach(o=>lfoGain.connect(o.frequency));
+  lfo.start();
+
+  droneNodes = {master, filter, oscs, lfo};
+}
+function stopDroneSound(){
+  if(!droneNodes) return;
+  const {master, oscs, lfo} = droneNodes;
+  master.gain.linearRampToValueAtTime(0, audioCtx.currentTime+0.25);
+  setTimeout(()=>{ oscs.forEach(o=>o.stop()); lfo.stop(); }, 300);
+  droneNodes=null;
+}
+function toggleDrone(){
+  const btn=document.getElementById('droneToggle');
+  droneOn = !droneOn;
+  if(droneOn){
+    const n=parseInt(document.getElementById('droneNote').value);
+    const oct=parseInt(document.getElementById('droneOctave').value);
+    startDroneSound(noteFreq(n,oct));
+    btn.textContent='Parar';
+  } else {
+    stopDroneSound();
+    btn.textContent='Tocar';
+  }
+}
+function setBpm(v){ bpm=parseInt(v); document.getElementById('bpmDisplay').textContent=bpm; document.getElementById('bpmSlider').value=bpm; if(metroInterval){ toggleMetro(); toggleMetro(); } }
+function adjustBpm(d){ setBpm(Math.min(208, Math.max(40, bpm+d))); }
+function click(){
+  if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  const osc=audioCtx.createOscillator(), gain=audioCtx.createGain();
+  osc.frequency.value=1000; gain.gain.setValueAtTime(0.3,audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.05);
+  osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime+0.05);
+  const dot=document.getElementById('pulseDot'); dot.classList.add('beat'); setTimeout(()=>dot.classList.remove('beat'),90);
+}
+function toggleMetro(){
+  const btn=document.getElementById('metroToggle');
+  if(metroInterval){ clearInterval(metroInterval); metroInterval=null; btn.textContent='Iniciar'; }
+  else { click(); metroInterval=setInterval(click, 60000/bpm); btn.textContent='Parar'; }
+}
+let tapTimes=[];
+function tapTempo(){
+  const now=Date.now(); tapTimes=tapTimes.filter(t=>now-t<2500); tapTimes.push(now);
+  if(tapTimes.length>=2){
+    const intervals=tapTimes.slice(1).map((t,i)=>t-tapTimes[i]);
+    const avg=intervals.reduce((a,b)=>a+b,0)/intervals.length;
+    setBpm(Math.round(60000/avg));
+  }
+}
+
+/* ---------- Repertório: progresso + prazos + ritmo sugerido ---------- */
+function loadRep(){
+  document.getElementById('duoAtual').value = rep.duoAtual;
+  document.getElementById('duoTotal').value = rep.duoTotal;
+  document.getElementById('rhapAtual').value = rep.rhapAtual;
+  document.getElementById('rhapTotal').value = rep.rhapTotal;
+  updateRepView();
+}
+function saveRep(){
+  rep.duoAtual=parseInt(document.getElementById('duoAtual').value)||0;
+  rep.duoTotal=parseInt(document.getElementById('duoTotal').value)||1;
+  rep.rhapAtual=parseInt(document.getElementById('rhapAtual').value)||0;
+  rep.rhapTotal=parseInt(document.getElementById('rhapTotal').value)||1;
+  localStorage.setItem('sax_rep', JSON.stringify(rep));
+  updateRepView();
+}
+function paceText(atual,total,deadlineStr){
+  const dias=daysUntil(deadlineStr);
+  const restante=total-atual;
+  if(dias<=0) return restante<=0 ? 'Prazo cumprido.' : 'Prazo encerrado — restam '+restante+' compassos.';
+  if(restante<=0) return 'Leitura completa.';
+  const semanas=Math.max(1, Math.ceil(dias/7));
+  const porSemana=(restante/semanas).toFixed(1);
+  const porDia=(restante/dias).toFixed(1);
+  return `Faltam ${restante} compassos em ${dias} dias (${semanas} semanas) → ritmo sugerido: ~${porSemana}/semana (~${porDia}/dia)`;
+}
+function updateRepView(){
+  document.getElementById('progDuo').style.width = Math.min(100,(rep.duoAtual/rep.duoTotal*100))+'%';
+  document.getElementById('progRhap').style.width = Math.min(100,(rep.rhapAtual/rep.rhapTotal*100))+'%';
+  const dDuo=daysUntil('2026-08-31'), dRhap=daysUntil('2026-12-31');
+  document.getElementById('deadlineDuo').textContent = dDuo>=0 ? dDuo+' dias restantes' : 'Prazo encerrado';
+  document.getElementById('deadlineRhap').textContent = dRhap>=0 ? dRhap+' dias restantes' : 'Prazo encerrado';
+  document.getElementById('paceDuo').textContent = paceText(rep.duoAtual, rep.duoTotal, '2026-08-31');
+  document.getElementById('paceRhap').textContent = paceText(rep.rhapAtual, rep.rhapTotal, '2026-12-31');
+
+  const duoIsPriority = (weekNum % 2 === 1);
+  document.getElementById('flagDuo').style.display = duoIsPriority ? 'inline-block':'none';
+  document.getElementById('flagRhap').style.display = !duoIsPriority ? 'inline-block':'none';
+  document.getElementById('weekBadge').innerHTML = 'Semana '+weekNum+' · prioridade: <b>'+(duoIsPriority?'Duo Concertant':'Rhapsody')+'</b>';
+  document.getElementById('repHoje').textContent = duoIsPriority ? '— foco: Duo Concertant' : '— foco: Rhapsody';
+}
+loadRep();
+updateDroneFreq();
+
+/* ---------- Data e hora ao vivo ---------- */
+function updateDatetime(){
+  const now = new Date();
+  const diaSemana = now.toLocaleDateString('pt-BR', {weekday:'long'});
+  const dataStr = now.toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit', year:'numeric'});
+  const horaStr = now.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+  document.getElementById('datetimeDisplay').textContent = diaSemana.charAt(0).toUpperCase()+diaSemana.slice(1)+' · '+dataStr+' · '+horaStr;
+}
+updateDatetime();
+setInterval(updateDatetime, 1000);
+
+/* ---------- Registro do Service Worker (PWA offline) ---------- */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
+  });
+}
+</script>
+
+</body>
+</html>

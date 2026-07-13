@@ -1,0 +1,18 @@
+{
+  "name": "Método — Saxofone",
+  "short_name": "Saxofone",
+  "description": "Rotina de estudos de saxofone: escalas (Londeix), estudos (Ferling), repertório (Duo Concertant e Rhapsody) e metrônomo/drone.",
+  "start_url": "./rotina-saxofone.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#141A17",
+  "theme_color": "#141A17",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
+
